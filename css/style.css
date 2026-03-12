@@ -1,0 +1,243 @@
+/* --- VARIABLES ACTUALIZADAS (COLOR IMAGEN 2) --- */
+:root {
+    --primary: #2563eb;
+    --dark-bg: #030712;        /* Fondo ultra oscuro de la imagen */
+    --glass-bg: rgba(255, 255, 255, 0.05); /* Cristal translúcido */
+    --glass-border: rgba(255, 255, 255, 0.1); /* Borde sutil */
+    --text-muted: #94a3b8;     /* Gris azulado para textos secundarios */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    background: var(--dark-bg);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* --- CANVAS AL FONDO (DEGRADADO RADIAL) --- */
+#starsCanvas {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    /* Gradiente radial para simular profundidad espacial como en la imagen */
+    background: radial-gradient(circle at center, #1e1b4b 0%, #030712 100%);
+}
+
+.login-wrapper {
+    flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px;
+}
+
+/* --- TARJETA ESTILO DARK GLASS --- */
+.login-container {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px); /* Efecto de desenfoque de fondo */
+    padding: 40px;
+    border-radius: 24px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    color: white; /* Texto blanco para resaltar sobre el fondo oscuro */
+}
+
+.logo { max-width: 150px; margin-bottom: 20px; }
+h2 { margin-bottom: 25px; font-weight: 800; color: white; letter-spacing: -1px; }
+
+.input-group { margin-bottom: 20px; text-align: left; }
+.input-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: var(--text-muted); }
+
+/* --- INPUTS OSCUROS --- */
+.input-group input { 
+    width: 100%; 
+    padding: 12px; 
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border); 
+    border-radius: 12px; 
+    font-size: 16px;
+    color: white;
+    outline: none;
+    transition: 0.3s;
+}
+
+.input-group input:focus {
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.password-wrapper { position: relative; }
+#togglePassword { position: absolute; right: 15px; top: 15px; cursor: pointer; color: var(--text-muted); }
+
+.login-button {
+    width: 100%; padding: 15px; background: var(--primary); color: white;
+    border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s;
+    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+}
+
+.login-button:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.4); }
+
+/* --- BOTONES SOCIALES --- */
+.social-login { margin-top: 30px; border-top: 1px solid var(--glass-border); padding-top: 20px; }
+.social-buttons { display: flex; gap: 10px; }
+.social-btn {
+    flex: 1; padding: 12px; border-radius: 12px; 
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.03); 
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-weight: 600; color: white;
+    transition: 0.3s;
+}
+
+.social-btn:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); }
+
+footer { padding: 30px; text-align: center; color: var(--text-muted); border-top: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); }
+.instagram-username { font-weight: bold; color: var(--white); }
+
+
+/* --- ACCIONES SECUNDARIAS (BOTONES) --- */
+.secondary-actions {
+    display: flex;
+    flex-direction: column; /* Apilados para que no se vean apretados */
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-secondary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.03); /* Fondo muy sutil */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: var(--text-muted); /* Gris azulado */
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary i {
+    font-size: 12px;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Ajuste del social-login para dar aire */
+.social-login {
+    margin-top: 25px;
+    border-top: 1px solid var(--glass-border);
+    padding-top: 20px;
+}
+
+/* --- BOTÓN GHOST (VOLVER) --- */
+.btn-ghost {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15); /* Borde sutil */
+    border-radius: 12px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 10px;
+}
+
+.btn-ghost i {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+}
+
+.btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.btn-ghost:hover i {
+    transform: translateX(-5px); /* Pequeña animación de la flecha */
+}
+
+/* Ajuste para el contenedor de botones secundarios */
+.secondary-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 40px !important;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    cursor: pointer;
+    color: #94a3b8;
+    z-index: 10;
+}
+
+.toggle-password:hover {
+    color: #2563eb;
+}
+
+/* --- FOOTER --- */
+footer {
+    padding: 30px;
+    text-align: center;
+    border-top: 1px solid var(--glass-border);
+    background: rgba(3, 7, 18, 0.8);
+}
+
+footer p {
+    color: white; /* Cambiado a blanco sólido */
+    font-size: 0.8rem;
+}
+
+.logo {
+    max-width: 80px;            /* Tamaño más pequeño (ajusta a tu gusto) */
+    height: auto;
+    margin: 0 auto 20px auto;
+    display: block;
+    
+    /* ESTO QUITA EL FONDO SI ES NEGRO */
+    mix-blend-mode: screen;     
+    
+    /* Opcional: si el fondo fuera blanco, usa: mix-blend-mode: multiply; */
+    
+    filter: brightness(1.1);    /* Un poco más de brillo para que resalte */
+}
+.logo {
+    max-width: 80px;            /* Aquí la haces más pequeña */
+    height: auto;
+    display: block;
+    margin: 0 auto 20px auto;
+    
+    /* ESTA LÍNEA HACE LA MAGIA */
+    mix-blend-mode: multiply;   
+}
