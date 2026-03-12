@@ -1,0 +1,141 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { 
+    getAuth, 
+    onAuthStateChanged, 
+    signInWithPopup,
+    GoogleAuthProvider, 
+    signInAnonymously, 
+    signInWithEmailAndPassword 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+// Mantenemos tus credenciales intactas
+const firebaseConfig = {
+    apiKey: "AIzaSyCvKVrzLXbP4eiJAcIr0gHzdtBKifFxdNI", 
+    authDomain: "nose-237af.firebaseapp.com",
+    projectId: "nose-237af",
+    appId: "1:162206664454:web:79cc437e065dd3ac6ec087"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// --- OBSERVADOR DE ESTADO ---
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        console.log("Sesión detectada, redirigiendo al dashboard local...");
+        // CAMBIO CLAVE: Usamos ruta relativa para que no te eche de la web donde estás
+        window.location.replace("dashboard.html");
+    }
+});
+
+// --- EVENTOS DE USUARIO ---
+
+// Google con POPUP
+document.getElementById('btnGoogle')?.addEventListener('click', async () => {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    try {
+        await signInWithPopup(auth, provider);
+    } catch (err) { 
+        console.error("Error Google:", err.code);
+        if(err.code === 'auth/popup-blocked') {
+            Swal.fire('Ventana bloqueada', 'Activa las ventanas emergentes para entrar con Google', 'warning');
+        } else {
+            Swal.fire('Error', 'Fallo al conectar con Google', 'error');
+        }
+    }
+});
+
+// Email
+document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('username').value;
+    const pass = document.getElementById('password').value;
+    try {
+        await signInWithEmailAndPassword(auth, email, pass);
+    } catch (err) { 
+        Swal.fire('Error de acceso', 'Correo o contraseña incorrectos', 'error');
+    }
+});
+
+// Invitado
+document.getElementById('btnGuest')?.addEventListener('click', async () => {
+    try { 
+        await signInAnonymously(auth); 
+    } catch (err) { 
+        Swal.fire('Error', 'No se pudo iniciar sesión como invitado', 'error');
+    }
+});
+
+// --- MOTOR DE ESTRELLAS ---
+const canvas = document.getElementById('starsCanvas');
+if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let stars = [], shootingStars = [];
+
+    function initStars() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        stars = [];
+        for (let i = 0; i < 150; i++) {
+            stars.push({ 
+                x: Math.random() * canvas.width, 
+                y: Math.random() * canvas.height, 
+                r: Math.random() * 1.2, 
+                opacity: Math.random(), 
+                blink: Math.random() * 0.02 
+            });
+        }
+    }
+
+    function createShootingStar(customX, customY) {
+        shootingStars.push({ 
+            x: customX || Math.random() * (canvas.width * 0.3), 
+            y: customY || canvas.height + Math.random() * 50, 
+            len: Math.random() * 120 + 80, 
+            speed: Math.random() * 8 + 10, 
+            opacity: 1 
+        });
+    }
+
+    function animateStars() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        stars.forEach(s => {
+            s.opacity += s.blink;
+            if (s.opacity > 1 || s.opacity < 0) s.blink *= -1;
+            ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
+            ctx.beginPath(); 
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); 
+            ctx.fill();
+        });
+        shootingStars.forEach((s, i) => {
+            let gradient = ctx.createLinearGradient(s.x, s.y, s.x - s.len, s.y + s.len);
+            gradient.addColorStop(0, `rgba(255, 255, 255, ${s.opacity})`);
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            ctx.strokeStyle = gradient;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(s.x, s.y);
+            ctx.lineTo(s.x - s.len, s.y + s.len); 
+            ctx.stroke();
+            s.x += s.speed; s.y -= s.speed; s.opacity -= 0.015;
+            if (s.opacity <= 0) shootingStars.splice(i, 1);
+        });
+        requestAnimationFrame(animateStars);
+    }
+
+    initStars(); animateStars();
+    setInterval(() => createShootingStar(), 2500); 
+    window.addEventListener('resize', initStars);
+}
+
+// Toggle Password
+document.getElementById('togglePassword')?.addEventListener('click', function() {
+    const passInput = document.getElementById('password');
+    const type = passInput.type === 'password' ? 'text' : 'password';
+    passInput.type = type;
+    this.classList.toggle('fa-eye');
+    this.classList.toggle('fa-eye-slash');
+});
