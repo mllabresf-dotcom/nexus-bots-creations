@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soporte Técnico | Soporte Mallorca</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="img/FAVICON.png">
+
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #020617;
+            color: white;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .academy-container, .linux-container {
+            flex: 1; 
+            display: flex;
+        }
+
+        .mini-xp-container {
+            position: fixed;
+            top: 85px; 
+            right: 20px;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-right: 3px solid var(--user-rank-color, #2563eb);
+            padding: 10px 15px;
+            border-radius: 12px;
+            z-index: 999;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            min-width: 200px;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none; 
+            color: inherit;
+            cursor: pointer;
+        }
+
+        .mini-xp-container:hover {
+            transform: translateY(-5px);
+            border-color: rgba(37, 99, 235, 0.5);
+            box-shadow: 0 12px 40px rgba(37, 99, 235, 0.2);
+        }
+
+        .mini-xp-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mini-rank-badge {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            padding: 6px 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            min-width: 45px;
+        }
+
+        .mini-label {
+            display: block;
+            font-size: 0.55rem;
+            color: var(--user-rank-color, #2563eb);
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .mini-num {
+            font-size: 1.2rem;
+            font-weight: 900;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .mini-xp-details {
+            flex-grow: 1;
+        }
+
+        .mini-xp-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 5px;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .mini-xp-bar-fill {
+            height: 100%;
+            width: 0%; 
+            background: linear-gradient(90deg, var(--user-rank-color, #2563eb), #60a5fa);
+            box-shadow: 0 0 10px var(--user-rank-color, rgba(37, 99, 235, 0.5));
+            transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .mini-xp-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            font-family: 'Fira Code', monospace;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .mini-xp-pct {
+            color: var(--user-rank-color, #2563eb);
+            font-weight: bold;
+        }
+
+        .main-footer {
+            width: 100%;
+            padding: 30px 0;
+            margin-top: auto; 
+            background: rgba(3, 7, 18, 0.85); 
+            backdrop-filter: blur(10px); 
+            border-top: 1px solid rgba(255, 255, 255, 0.05); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .footer-content p {
+            color: rgba(255, 255, 255, 0.6); 
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        .footer-divider {
+            margin: 0 10px;
+            color: #2563eb; 
+            opacity: 0.5;
+        }
+
+        /* --- LOADER --- */
+        #loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #0f172a 0%, #030712 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .loader-hidden { display: none !important; }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(37, 99, 235, 0.1);
+            border-radius: 50%;
+            border-top: 3px solid #2563eb;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div id="loader-container" class="loader-hidden">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <div id="loader-text">Iniciando sistema...</div>
+        </div>
+    </div>
+
+    <a href="/html/premios.html" id="mini-xp-widget" class="mini-xp-container">
+        <div class="mini-xp-info">
+            <div class="mini-rank-badge">
+                <span class="mini-label">LVL</span>
+                <span id="mini-level" class="mini-num">1</span>
+            </div>
+            <div class="mini-xp-details">
+                <div id="mini-rank-name" style="font-size: 0.65rem; font-weight: 800; color: var(--user-rank-color); text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px;">Cargando...</div>
+                <div class="mini-xp-bar-bg">
+                    <div id="mini-xp-fill" class="mini-xp-bar-fill"></div>
+                </div>
+                <div class="mini-xp-footer">
+                    <span id="mini-xp-text" class="mini-xp-stats">0 / 100 XP</span>
+                    <span id="mini-xp-percent" class="mini-xp-pct">0%</span>
+                </div>
+            </div>
+        </div>
+    </a>
+
+    <canvas id="starsCanvas"></canvas>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="user-profile-mini">
+                <i class="fas fa-user-circle"></i>
+                <div>
+                    <h4 id="sidebarUserName">Invitado...</h4>
+                    <p id="sidebarUserEmail">Invitado</p>
+                </div>
+            </div>
+            <button id="closeSidebar" class="close-btn">&times;</button>
+        </div>
+
+        <nav class="sidebar-content">
+            <div class="menu-section">
+                <h3><i class="fas fa-id-card"></i> PERFIL</h3>
+                <a href="/html/info.html"><i class="fas fa-users-gear"></i> Conocenos</a>
+                <a href="/html/precios.html"><i class="fas fa-credit-card"></i> Suscripciones</a>
+                <a href="/html/datos.html"><i class="fas fa-cog"></i> Configuración</a>
+                <a href="/html/SO.html"><i class="fab fa-linux"></i> Sistema Operativo</a>
+                <a href="/html/bot.html"><i class="fas fa-robot"></i> Bots de Discord</a>
+                <a href="/html/telegram.html"><i class="fab fa-telegram"></i> Bots de Telegram</a>
+                <a href="/html/tickets.html"><i class="fas fa-ticket-alt"></i> Sistema de Incidencias</a>
+                <a href="/html/Proyectos.html"><i class="fas fa-heart"></i> Mis Proyectos</a>
+
+            </div>
+            <div class="menu-section">
+                <h3><i class="fas fa-graduation-cap"></i> ACADEMIA DEV</h3>
+                <a href="/html/tips.html"><i class="fas fa-terminal"></i> Academia desarrollo</a>
+                <a href="/html/linux.html"><i class="fas fa-server"></i> Academia servers en Linux</a>
+            </div>
+            <div class="menu-section" style="margin-top: auto;">
+                <button id="btnCerrarSesionSidebar" class="btn-exit-sidebar">Cerrar Sesión</button>
+            </div>
+        </nav>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <nav class="main-nav">
+        <div class="nav-left">
+            <button id="openSidebar" class="menu-toggle"><i class="fas fa-bars"></i></button>
+            <div class="logo">Soporte Tecnico</div>
+        </div>
+        <ul>
+            <li><a href="/html/precios.html">Precios</a></li>
+            <li><a href="/html/contacto.html">Contacto</a></li>
+            <li><button id="btnCerrarSesion" class="btn-exit">Salir</button></li>
+        </ul>
+    </nav>
+
+    <header class="hero">
+        <h1>Centro de Ayuda Técnica</h1>
+        <p>Bienvenido, <span id="userNameDisplay">Usuario</span>. ¿En qué te podemos ayudar?</p>
+        <div class="search-container">
+            <form action="https://www.google.com/search" method="get" target="_blank" class="search-form" id="mainSearchForm">
+                <i class="fas fa-search"></i>
+                <input type="text" name="q" id="searchInput" placeholder="Buscar por Internet..." required autocomplete="off">
+                <button type="submit">Explorar</button>
+                <div id="searchSuggestions" class="suggestions-container"></div>
+            </form>
+        </div>
+    </header>
+
+    <main class="services">
+        <a href="/html/git.html" class="card-link">
+            <div class="card">
+                <i class="fas fa-code-branch"></i>
+                <h3>Entorno de desarrollo</h3>
+                <p>Simulador de entorno de desarrollo (DEMO)</p>
+            </div>
+        </a>
+
+        <a href="/html/server.html" class="card-link">
+            <div class="card">
+                <i class="fas fa-terminal" style="color: #28a745;"></i>
+                <h3>Laboratorio Linux</h3>
+                <p>Simulador de una terminal Linux semicompleta (DEMO).</p>
+            </div>
+        </a>
+
+        <a href="/html/datosssd.html" class="card-link">
+            <div class="card">
+                <i class="fas fa-database" style="color: purple"></i>
+                <h3>Servicios cloud</h3>
+                <p>Accede a nuestros servicios en la nube (DEMO).</p>
+            </div>
+        </a>
+
+        <a href="/html/redes.html" class="card-link">
+           <div class="card">
+                <i class="fas fa-project-diagram" style="color: red"></i>
+                <h3>Topología de Redes</h3>
+                <p>Simulador de configuración de Redes (DEMO).</p>
+            </div>
+        </a>
+
+        <a href="/html/tickets.html" class="card-link">
+            <div class="card">
+                <i class="fas fa-ticket-alt" style="color: #2563eb;"></i>
+                <h3>Creación de Incidencias</h3>
+                <p>Creación de Incidencias para nuestro soporte tecnico</p>
+            </div>
+        </a>
+    </main>
+
+    <button class="ai-chat-btn" id="openChat"><i class="fas fa-robot"></i></button>
+
+    <div class="chat-container" id="chatWindow">
+        <div class="chat-header">
+            <span><i class="fas fa-robot"></i> Asistente (EN MANTENIMIENTO)</span>
+            <button id="closeChat">&times;</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="msg ai">¡Hola! Soy tu asistente virtual. ¿En qué puedo ayudarte?</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="userInput" placeholder="Escribe tu duda aquí...">
+            <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p>&copy; 2026 Soporte Mallorca. <span class="footer-divider">|</span> Ayuda: <a href="contacto.html" style="color:inherit; text-decoration:none;">Contacto</a></p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>
